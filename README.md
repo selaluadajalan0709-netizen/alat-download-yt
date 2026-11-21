@@ -4,7 +4,7 @@ Ini versi publik dari **Alat Download YT by Sofy** yang siap di-upload sendiri k
 Di dalamnya sudah ada:
 
 - `index.html` — halaman utama (converter, pencarian, QRIS Traktir Kopi, riwayat, statistik, FAQ)
-- `assets/shark.webp` — maskot Sofy
+- `assets/doraemon.png` — logo Doraemon
 - `assets/qris.png` — QRIS Traktir Kopi kamu
 - `api/info.js`, `api/convert.js`, `api/search.js`, `api/suggest.js` — fungsi serverless Vercel yang menghubungi YouTube (Innertube) untuk ambil info & link download
 - `api/_lib.js` — logika bersama (pilihan client cadangan, gabung format, cache 10 menit)
@@ -43,5 +43,5 @@ Lalu buka alamat lokal yang ditampilkan.
 ## Catatan
 
 - Jangan ubah nama folder `api` — Vercel otomatis menjadikannya endpoint `/api/info`, `/api/convert`, `/api/search`, `/api/suggest`.
-- Kalau mau ganti QRIS / maskot, cukup timpa file di folder `assets/` dengan nama yang sama.
+- Kalau mau ganti QRIS / logo, cukup timpa file di folder `assets/` dengan nama yang sama.
 - Harap hanya mengunduh konten yang berhak kamu gunakan.
