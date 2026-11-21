@@ -1,5 +1,7 @@
 
 // Shared Innertube logic — ported from the original server actions.
+// Includes the 2026-11-22 anti bot-check fix: 9 client versions, merged
+// formats, 10-minute cache, and 3 passes with escalating pauses.
 // Public Innertube client key (same key YouTube's own web client uses,
 // embedded in youtube.com pages). Override with YT_INNERTUBE_KEY env if needed.
 const INNERTUBE_KEY = process.env.YT_INNERTUBE_KEY || "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8";
@@ -14,11 +16,21 @@ function parseVideoId(input){
   return null;
 }
 function looksLikeUrl(t){return /^(https?:\/\/)?(www\.|m\.|music\.)?(youtube\.com|youtu\.be)\//i.test((t||"").trim());}
+// Anti bot-check chain (updated 2026-11-22): YouTube judges every client
+// VERSION independently, so the chain carries several versions of the
+// same families as independent chances — ANDROID_VR 1.65.10 / 1.60.19 /
+// 1.50.23, ANDROID 20.10.38 / 20.30.36 / 20.14.38, IOS 20.10.4 / 20.14.38,
+// plus VISIONOS. Only 20.x+ ANDROID/IOS versions are used (older ones
+// are rejected by YouTube with HTTP 400).
 const PLAYER_CLIENTS=[
  {ua:VR_UA,client:{clientName:"ANDROID_VR",clientVersion:"1.65.10",deviceModel:"Oculus Quest 3",androidSdkVersion:32,hl:"en"}},
  {ua:"com.google.android.apps.youtube.vr.oculus/1.60.19 (Linux; U; Android 12L; eureka-user Build/SQ3A.220605.009.A1)",client:{clientName:"ANDROID_VR",clientVersion:"1.60.19",deviceModel:"Oculus Quest 3",androidSdkVersion:32,hl:"en"}},
  {ua:"com.google.android.youtube/20.10.38 (Linux; U; Android 11) gzip",client:{clientName:"ANDROID",clientVersion:"20.10.38",androidSdkVersion:30,osName:"Android",osVersion:"11",hl:"en",gl:"US"}},
+ {ua:"com.google.android.youtube/20.30.36 (Linux; U; Android 11) gzip",client:{clientName:"ANDROID",clientVersion:"20.30.36",androidSdkVersion:30,osName:"Android",osVersion:"11",hl:"en",gl:"US"}},
+ {ua:"com.google.android.youtube/20.14.38 (Linux; U; Android 11) gzip",client:{clientName:"ANDROID",clientVersion:"20.14.38",androidSdkVersion:30,osName:"Android",osVersion:"11",hl:"en",gl:"US"}},
+ {ua:"com.google.android.apps.youtube.vr.oculus/1.50.23 (Linux; U; Android 12L; eureka-user Build/SQ3A.220605.009.A1)",client:{clientName:"ANDROID_VR",clientVersion:"1.50.23",deviceModel:"Oculus Quest 3",androidSdkVersion:32,hl:"en"}},
  {ua:"com.google.ios.youtube/20.10.4 (iPhone16,2; U; CPU iOS 18_3_2 like Mac OS X;)",client:{clientName:"IOS",clientVersion:"20.10.4",deviceMake:"Apple",deviceModel:"iPhone16,2",osName:"iOS",osVersion:"18.3.2.22D82",hl:"en",gl:"US"}},
+ {ua:"com.google.ios.youtube/20.14.38 (iPhone16,2; U; CPU iOS 18_3_2 like Mac OS X;)",client:{clientName:"IOS",clientVersion:"20.14.38",deviceMake:"Apple",deviceModel:"iPhone16,2",osName:"iOS",osVersion:"18.3.2.22D82",hl:"en",gl:"US"}},
  {ua:"com.google.ios.youtube/20.10.4 (RealityFamily12,2; U; CPU visionOS 2_3 like Mac OS X;)",client:{clientName:"VISIONOS",clientVersion:"1.02",deviceMake:"Apple",deviceModel:"RealityFamily12,2",osName:"visionOS",osVersion:"2.3.23M1003",hl:"en",gl:"US"}},
 ];
 async function fetchPlayerOnce(spec,videoId){
@@ -42,7 +54,11 @@ function merge(base,next){if(!base) return next; const sf=new Set(base.formats.m
 async function fetchPlayer(videoId,opts){
   if(!opts?.skipCache){const c=cache.get(videoId); if(c&&Date.now()-c.at<TTL) return c.data;}
   let otherReason="", merged=null;
-  for(let pass=0;pass<2;pass++){
+  // Three passes with escalating pauses (1500ms, 4000ms): the bot check
+  // is intermittent per client/IP, so re-walking the 9-client chain
+  // rescues videos refused on the first attempt.
+  const PASS_PAUSES_MS=[1500,4000];
+  for(let pass=0;pass<3;pass++){
     let sawBot=false;
     for(const spec of PLAYER_CLIENTS){
       const r=await fetchPlayerOnce(spec,videoId);
@@ -57,7 +73,8 @@ async function fetchPlayer(videoId,opts){
     }
     if(merged&&hasMuxed(merged)&&hasAudio(merged)) break;
     if(!merged&&!sawBot) break;
-    if(pass===0) await new Promise(r=>setTimeout(r,1200));
+    const pause=PASS_PAUSES_MS[pass];
+    if(pause) await new Promise(r=>setTimeout(r,pause));
   }
   if(merged){cache.set(videoId,{data:merged,at:Date.now()}); return merged;}
   if(/unavailable|not available/i.test(otherReason)) throw new Error("Video ini tidak tersedia di YouTube (mungkin sudah dihapus atau dibatasi). Coba video lain ya.");

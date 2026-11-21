@@ -7,14 +7,14 @@ Di dalamnya sudah ada:
 - `assets/doraemon.png` — logo Doraemon
 - `assets/qris.png` — QRIS Traktir Kopi kamu
 - `api/info.js`, `api/convert.js`, `api/search.js`, `api/suggest.js` — fungsi serverless Vercel yang menghubungi YouTube (Innertube) untuk ambil info & link download
-- `api/_lib.js` — logika bersama (pilihan client cadangan, gabung format, cache 10 menit)
+- `api/_lib.js` — logika bersama (perbaikan anti cek bot terbaru: 9 versi client cadangan — ANDROID_VR / ANDROID / IOS / VISIONOS — gabung format dari semua client yang berhasil, cache 10 menit, dan 3x percobaan dengan jeda bertingkat)
 - `vercel.json` + `package.json` — konfigurasi Vercel (tanpa dependency tambahan)
 
 ## Bedanya dengan versi server sebelumnya
 
 - **Riwayat & statistik sekarang tersimpan di browser pengunjung** (localStorage), bukan di database server. Jadi riwayat tiap orang hanya ada di HP/browser dia sendiri, dan akan hilang kalau cache browser dibersihkan.
 - Download tetap sama: browser pengunjung mengunduh file **langsung dari server/CDN YouTube**. Mode MP3 mengunduh audio asli YouTube (biasanya M4A/AAC kualitas terbaik), bukan MP3 hasil transcode. Mode MP4 mengunduh MP4 yang sudah ada suaranya.
-- Kadang YouTube menolak beberapa video dari IP datacenter (cek bot / perlu login). Kalau itu terjadi, pesan error di halaman akan menjelaskannya — coba lagi sebentar atau coba video lain.
+- Kadang YouTube tetap menolak beberapa video dari IP datacenter (cek bot / perlu login) walaupun sudah dicoba lewat 9 versi client dan 3x percobaan. Kalau itu terjadi, pesan error di halaman akan menjelaskannya — coba lagi sebentar atau coba video lain. Perbaikan ini mengurangi video yang gagal, tapi tidak bisa menjamin 100% lolos karena cek bot-nya dari sisi YouTube/IP Vercel.
 
 ## Cara upload ke Vercel (paling gampang — lewat GitHub)
 
