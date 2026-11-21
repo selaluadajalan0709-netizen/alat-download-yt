@@ -1,0 +1,2 @@
+const {cors}=require("./_lib");
+module.exports=async(req,res)=>{cors(res); const q=(req.query?.q||req.query?.query||"").toString(); if(!q) return res.status(200).json({suggestions:[]}); try{const r=await fetch(`https://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q=${encodeURIComponent(q)}`); if(!r.ok) return res.status(200).json({suggestions:[]}); const j=await r.json(); return res.status(200).json({suggestions:(j[1]||[]).slice(0,8)});}catch{return res.status(200).json({suggestions:[]});}};

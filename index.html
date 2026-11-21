@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Alat Download YT by Sofy — YouTube ke MP3 & MP4</title>
+<meta name="description" content="Convert video YouTube jadi MP3 atau MP4 gratis, tanpa akun, langsung di browser."/>
+<link rel="icon" href="assets/shark.webp"/>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f6f9fb;color:#16202a}
+header{background:#0b86c6;color:#fff;padding:18px 16px} .wrap{max-width:860px;margin:0 auto;padding:0 16px}
+.brand{display:flex;gap:14px;align-items:center}.brand img{width:56px;height:56px;border-radius:14px;object-fit:cover;background:#fff}
+h1{font-size:22px;margin:0} .sub{opacity:.92;font-size:14px;margin-top:2px}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:18px;margin:16px 0;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+label{font-weight:600;font-size:14px} .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+input[type=text]{flex:1;min-width:220px;padding:12px 14px;border:1.5px solid #cbd5e1;border-radius:10px;font-size:15px}
+button{cursor:pointer;border:0;border-radius:10px;padding:11px 16px;font-weight:700;background:#0b86c6;color:#fff}
+button.secondary{background:#e8f4fb;color:#0b6fa3} button.ghost{background:#fff;color:#334155;border:1px solid #cbd5e1}
+.seg{display:flex;gap:8px;margin:12px 0}.seg button{background:#e2e8f0;color:#334155}.seg button.active{background:#0b86c6;color:#fff}
+#status{font-size:14px;color:#475569;min-height:20px;margin-top:10px} #error{background:#fef2f2;color:#991b1b;border:1px solid #fecaca;padding:10px 12px;border-radius:10px;display:none;margin-top:10px}
+.result{display:none;gap:14px;margin-top:14px}.result img{width:160px;border-radius:10px} .dl{background:#16a34a}
+.qris img.thumb{width:150px;border-radius:10px;border:1px solid #e2e8f0;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.stat{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:14px;text-align:center}.stat b{font-size:22px;display:block}
+.hist{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #f1f5f9}.hist img{width:110px;border-radius:8px}
+dialog{border:0;border-radius:16px;padding:18px;max-width:92vw}dialog img{max-width:420px;width:100%}
+footer{color:#64748b;font-size:13px;text-align:center;padding:24px} a{color:#0b86c6}
+.search-item{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:#fff;border:1px solid #e2e8f0;color:#16202a;margin-top:8px}.search-item img{width:110px;border-radius:8px}
+@media(max-width:560px){.result{flex-direction:column}.result img{width:100%}}
+</style>
+</head>
+<body>
+<header><div class="wrap brand"><img src="assets/shark.webp" alt="Sofy"/><div><h1>Alat Download YT by Sofy</h1><div class="sub">YouTube ke MP3 &amp; MP4 — gratis, tanpa akun, langsung di browser</div></div></div></header>
+<main class="wrap">
+<section class="card">
+<p>Selamat datang! Tempel link YouTube atau ketik judul lagu, pilih MP3 / MP4, lalu Konversi.</p>
+<label for="input">Tempel link video YouTube di sini</label>
+<div class="row"><input id="input" type="text" placeholder="Cari lagu atau tempel tautan YouTube"/><button class="secondary" id="pasteBtn">Tempel</button><button class="ghost" id="clearBtn">Hapus</button></div>
+<div id="suggest"></div>
+<div class="seg"><button id="btnMp3" class="active">MP3 (audio)</button><button id="btnMp4">MP4 (video + suara)</button>
+<select id="track" style="padding:10px;border-radius:10px;border:1px solid #cbd5e1"><option value="Asli">Audio: Asli</option></select></div>
+<button id="convertBtn" style="width:100%;font-size:16px">Konversi</button>
+<div id="status"></div><div id="error"></div><div id="searchResults"></div>
+<div class="result" id="result"><img id="thumb" alt=""/><div><h3 id="rTitle" style="margin:4px 0"></h3><div id="rMeta" style="color:#64748b;font-size:14px"></div><p><a id="dl" href="#" download><button class="dl">⬇ Unduh</button></a> <button class="ghost" id="again">Konversi lagi</button></p><p><a id="watch" href="#" target="_blank" rel="noopener">Tonton di YouTube</a></p></div></div>
+</section>
+
+<section class="card qris">
+<h2 style="margin-top:0">Traktir Kopi ☕</h2>
+<p>Alat ini gratis dipakai. Kalau ngebantu dan kamu pengin traktir kopi buat Sofy, scan QRIS di bawah ini — berapapun nominalnya, makasih banyak! 🙏</p>
+<img class="thumb" id="qrisThumb" src="assets/qris.png" alt="Kode QR QRIS untuk traktir kopi"/>
+<p style="color:#64748b;font-size:13px">Satu QRIS untuk semua: GoPay, OVO, DANA, ShopeePay, m-banking, dan lainnya.</p>
+<button class="secondary" id="zoomQris">Perbesar QR</button> <a href="assets/qris.png" download="QRIS-Sofy.png"><button class="ghost">Simpan QR</button></a>
+</section>
+
+<section class="card"><h2 style="margin-top:0">Riwayat</h2><div id="history"><p style="color:#64748b">Belum ada riwayat. Hasil konversi pertamamu akan muncul di sini (tersimpan di browser ini).</p></div><button class="ghost" id="clearHist">Hapus semua</button></section>
+
+<section class="card"><h2 style="margin-top:0">Statistik</h2><div class="grid"><div class="stat"><b id="stTotal">0</b>Total konversi</div><div class="stat"><b id="stMp3">0</b>MP3</div><div class="stat"><b id="stMp4">0</b>MP4</div><div class="stat"><b id="stSize">0 MB</b>Total ukuran</div></div></section>
+
+<section class="card"><h2 style="margin-top:0">Cara download lagu YouTube jadi MP3</h2><ol><li>Salin link video di aplikasi YouTube (Bagikan → Salin link). Video biasa, Shorts, youtu.be dan music.youtube.com bisa.</li><li>Tempel link di kotak di atas lalu pilih mp3 untuk audio atau mp4 untuk video.</li><li>Ketuk “Konversi”, tunggu sebentar, lalu ketuk “Unduh”.</li></ol>
+<h3>Catatan format</h3><p>Untuk mp3, audio disimpan dalam format asli dari YouTube (biasanya M4A/AAC kualitas terbaik) supaya jernih dan cepat. Untuk mp4, video disimpan sebagai MP4 dengan suara. File diunduh browser kamu langsung dari server YouTube.</p></section>
+
+<section class="card"><h2 style="margin-top:0">FAQ</h2>
+<p><b>Apakah alat ini gratis?</b><br/>Ya. Gratis, tanpa daftar dan tanpa langganan.</p>
+<p><b>Apakah aman?</b><br/>Tidak perlu pasang aplikasi/ekstensi, dan kami tidak pernah meminta akun YouTube kamu.</p>
+<p><b>Kenapa konversi gagal?</b><br/>Biasanya video privat, dibatasi usia, siaran langsung, terlalu besar, atau YouTube sedang cek bot. Coba lagi sebentar atau coba video lain.</p>
+<p style="color:#64748b;font-size:13px">Harap hanya mengunduh konten yang berhak kamu gunakan.</p></section>
+</main>
+<footer>© Alat Download YT by Sofy 2026</footer>
+<dialog id="qrisModal"><h3>Traktir Kopi ☕</h3><img src="assets/qris.png" alt="QRIS"/><p><button onclick="document.getElementById('qrisModal').close()">Tutup</button></p></dialog>
+<script>
+let format='mp3';
+const $=id=>document.getElementById(id);
+const fmtSize=b=>b? (b/1048576).toFixed(1)+' MB':'—';
+const fmtDur=s=>{if(!s) return ''; const m=Math.floor(s/60), d=s%60; return m+':'+String(d).padStart(2,'0');};
+function setFormat(f){format=f; $('btnMp3').classList.toggle('active',f==='mp3'); $('btnMp4').classList.toggle('active',f==='mp4');}
+$('btnMp3').onclick=()=>setFormat('mp3'); $('btnMp4').onclick=()=>setFormat('mp4');
+$('pasteBtn').onclick=async()=>{try{$('input').value=await navigator.clipboard.readText();}catch{alert('Tidak bisa akses clipboard, tempel manual ya.');}};
+$('clearBtn').onclick=()=>{$('input').value=''; $('error').style.display='none'; $('searchResults').innerHTML='';};
+$('zoomQris').onclick=()=>$('qrisModal').showModal(); $('qrisThumb').onclick=()=>$('qrisModal').showModal();
+$('again').onclick=()=>{$('result').style.display='none'; window.scrollTo({top:0,behavior:'smooth'});};
+function showErr(m){$('error').textContent=m; $('error').style.display=m?'block':'none';}
+function history(){try{return JSON.parse(localStorage.getItem('sofy_history')||'[]');}catch{return[];}}
+function saveHist(list){localStorage.setItem('sofy_history',JSON.stringify(list.slice(0,50))); renderHist();}
+function renderHist(){const list=history(); $('stTotal').textContent=list.length; $('stMp3').textContent=list.filter(x=>x.format==='mp3').length; $('stMp4').textContent=list.filter(x=>x.format==='mp4').length; $('stSize').textContent=(list.reduce((a,x)=>a+(x.sizeBytes||0),0)/1048576).toFixed(1)+' MB';
+ if(!list.length){$('history').innerHTML='<p style="color:#64748b">Belum ada riwayat.</p>'; return;}
+ $('history').innerHTML=''; list.forEach((x,i)=>{const d=document.createElement('div'); d.className='hist'; d.innerHTML=`<img src="${x.thumbnailUrl}"><div><b></b><br><small>${x.format.toUpperCase()} • ${x.qualityLabel||''} • ${fmtSize(x.sizeBytes)}</small><br><a href="${x.downloadUrl}" download="${x.filename}">Unduh lagi</a> &nbsp; <a href="#" data-del="${i}">Hapus</a></div>`; d.querySelector('b').textContent=x.title; $('history').appendChild(d);});
+ document.querySelectorAll('[data-del]').forEach(a=>a.onclick=e=>{e.preventDefault(); const l=history(); l.splice(+a.dataset.del,1); saveHist(l);});}
+$('clearHist').onclick=()=>{localStorage.removeItem('sofy_history'); renderHist();};
+renderHist();
+let timer; $('input').addEventListener('input',()=>{clearTimeout(timer); const q=$('input').value.trim(); if(q.length<3||q.includes('youtube')||q.includes('youtu.be')){$('suggest').innerHTML='';return;} timer=setTimeout(async()=>{try{const r=await fetch('/api/suggest?q='+encodeURIComponent(q)); const j=await r.json(); $('suggest').innerHTML=(j.suggestions||[]).map(s=>`<button class="ghost" style="margin:4px 4px 0 0" onclick="document.getElementById('input').value=this.textContent">${s}</button>`).join('');}catch{}},350);});
+async function doConvert(url){
+ showErr(''); $('status').textContent='Menghubungi YouTube…'; $('convertBtn').disabled=true;
+ try{
+  const infoRes=await fetch('/api/info?url='+encodeURIComponent(url)); const infoJ=await infoRes.json();
+  if(infoJ.error||!infoJ.info){ // maybe it's a search query
+    if(!url.includes('youtube')&&!url.includes('youtu.be')){
+      const sr=await fetch('/api/search?q='+encodeURIComponent(url)); const sj=await sr.json();
+      if(sj.results&&sj.results.length){$('status').textContent='Hasil pencarian — ketuk video untuk dikonversi:'; $('searchResults').innerHTML=''; sj.results.forEach(v=>{const b=document.createElement('button'); b.className='search-item'; b.innerHTML=`<img src="${v.thumbnailUrl}"><span><b></b><br><small>${v.author} • ${v.durationLabel}</small></span>`; b.querySelector('b').textContent=v.title; b.onclick=()=>doConvert('https://www.youtube.com/watch?v='+v.videoId); $('searchResults').appendChild(b);}); return;}
+    }
+    throw new Error(infoJ.error||'Video tidak bisa dibaca.');
+  }
+  const info=infoJ.info;
+  const sel=$('track'); sel.innerHTML='<option value="Asli">Audio: Asli</option>'+(info.audioTracks||[]).map(t=>`<option value="${t.label}">${t.label}</option>`).join('');
+  $('status').textContent='Menyiapkan format…';
+  const cr=await fetch('/api/convert',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url,format,audioTrack:sel.value})});
+  const cj=await cr.json(); if(cj.error||!cj.conversion) throw new Error(cj.error||'Konversi gagal.');
+  const c=cj.conversion;
+  $('thumb').src=c.thumbnailUrl; $('rTitle').textContent=c.title; $('rMeta').textContent=`${c.author} • ${fmtDur(c.durationSeconds)} • ${c.qualityLabel} • ${fmtSize(c.sizeBytes)}`;
+  $('dl').href=c.downloadUrl; $('dl').setAttribute('download',c.filename); $('watch').href='https://www.youtube.com/watch?v='+c.videoId;
+  $('result').style.display='flex'; $('status').textContent='Siap diunduh ✔';
+  const l=history(); l.unshift(c); saveHist(l);
+ }catch(e){showErr(e.message||'Konversi gagal. Coba lagi sebentar.'); $('status').textContent='';}
+ finally{$('convertBtn').disabled=false;}
+}
+$('convertBtn').onclick=()=>{const v=$('input').value.trim(); if(!v){showErr('Tempel link YouTube atau ketik judul lagu dulu ya.'); return;} doConvert(v);};
+</script>
+</body></html>
